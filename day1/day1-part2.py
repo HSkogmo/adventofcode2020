@@ -28,20 +28,23 @@ def readNumbersFromFile(filePath):
 	return numbers
 
 # Time: O(n^2)
-# Space: O(n^3) ?
+# Space: O(n^2) ?
 def threeSumSolve(targetSum, setOfNumbers):
 	for number in setOfNumbers:
 		# targetSum = x + y + z
 		x = number
 		nestedTargetSum = targetSum - x
+		print(f'Solving twoSum for target {nestedTargetSum}')
 		try:
-			print(f'Solving twoSum for target {nestedTargetSum}')
-			y,z = twoSumSolve(nestedTargetSum, nums)
-			# stop and return on the first identified pair that satisfies tha targetSum = x + y + z condition
-			print(f'x={x}, y={y}, z={z}, x+y+z={x+y+z}, x*y*z={x*y*z}')
-			return x, y, z
+			y,z = twoSumSolve(nestedTargetSum, setOfNumbers)
 		except TypeError:
+			# TypeError occurs when twoSumSolve() didn't return a touple (two values) and Python attempts to unpack it anyway
+			# the method returns nothing (or None) when there wasn't a solution to the problem, so we can ignore and continue to the next number
 			continue
+
+		# stop and return on the first identified pair that satisfies tha targetSum = x + y + z condition
+		print(f'x={x}, y={y}, z={z}, x+y+z={x+y+z}, x*y*z={x*y*z}')
+		return x, y, z
 
 nums = readNumbersFromFile('./input.txt')
 print('All numbers: {}'.format(nums))
