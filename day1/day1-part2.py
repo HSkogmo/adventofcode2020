@@ -1,23 +1,49 @@
-def solve():
+# Time: O(n)
+# Space: O(n^2)
+def twoSumSolve(targetSum, setOfNumbers):
 	possibleAnswers = {}
 
-	with open('./input.txt', 'r') as file:
+	for number in setOfNumbers:
+		x = int(number)
+		# is the number in possible answers?
+		# if yes, then retrieve the value to that key, and multiply it with "number"
+		# if no, continue
+
+		if x in possibleAnswers:
+			y = possibleAnswers[x]
+			multiplication = x * y
+			print('x={}, y={}, x+y={}, x*y={}'.format(x, y, targetSum, multiplication))
+			# stop and return on the first identified pair that satifises the targetSum = x + y condition
+			return x,y
+
+		y = targetSum - x
+		possibleAnswers[y] = x
+
+def readNumbersFromFile(filePath):
+	numbers = []
+	with open(filePath, 'r') as file:
 		for line in file:
-			x = int(line)
-			# is the number in possible answers?
-			# if yes, then retrieve the value to that key, and multiply it with "number"
-			# if no, continue
+			number = int(line)
+			numbers.append(number)
+	return numbers
 
-			y = 2020 - x - z
+# Time: O(n^2)
+# Space: O(n^3) ?
+def threeSumSolve(targetSum, setOfNumbers):
+	for number in setOfNumbers:
+		# targetSum = x + y + z
+		x = number
+		nestedTargetSum = targetSum - x
+		try:
+			print(f'Solving twoSum for target {nestedTargetSum}')
+			y,z = twoSumSolve(nestedTargetSum, nums)
+			# stop and return on the first identified pair that satisfies tha targetSum = x + y + z condition
+			print(f'x={x}, y={y}, z={z}, x+y+z={x+y+z}, x*y*z={x*y*z}')
+			return x, y, z
+		except TypeError:
+			continue
 
-			if x in possibleAnswers:
-				y = possibleAnswers[x]
-				multiplication = x * y
-				print('x={}, y={}, x+y=2020, x*y={}'.format(x, y, multiplication))
-				return multiplication
+nums = readNumbersFromFile('./input.txt')
+print('All numbers: {}'.format(nums))
 
-			y = 2020 - x
-			possibleAnswers[y] = x
-
-answer = solve()
-print(answer)
+x,y,z = threeSumSolve(2020, nums)
