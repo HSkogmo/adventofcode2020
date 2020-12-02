@@ -29,6 +29,8 @@ def readNumbersFromFile(filePath):
 
 # Time: O(n^2)
 # Space: O(n^2) ?
+# Optimisation ideas; eliminating potential rechecks if there are any?
+# 				      sorting the setOfNumbers, and ?
 def threeSumSolve(targetSum, setOfNumbers):
 	for number in setOfNumbers:
 		# targetSum = x + y + z
