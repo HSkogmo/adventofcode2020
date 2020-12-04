@@ -1,12 +1,16 @@
 import re
 
+def in_bound(l, r):
+	return lambda x: l <= int(x) <= r
+
+
 class Passport:
 	def isValid(self):
 		requiredFields = {
-			'byr': (lambda x: int(x) >= 1920 and int(x) <= 2002),
-			'iyr': (lambda x: int(x) >= 2010 and int(x) <= 2020),
-			'eyr': (lambda x: int(x) >= 2020 and int(x) <= 2030),
-			'hgt': (lambda x: ),
+			'byr': in_bound(1920, 2002),
+			'iyr': in_bound(2010, 2020),
+			'eyr': in_bound(2020, 2030),
+			'hgt': (lambda x: True),
 			'hcl': (lambda x: True),
 			'ecl': (lambda x: True),
 			'pid': (lambda x: True)
