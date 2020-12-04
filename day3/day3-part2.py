@@ -21,13 +21,13 @@ def countTrees(map, moveToboggan, start_x = 0, start_y = 0):
 	try:
 		while True:
 			x, y = moveToboggan(x, y)
-			print(f'moved to {x}, {y}')
+			# print(f'moved to {x}, {y}')
 
 			# are the new y cordinate out of bounds?
 			# if so adjust them back to the starting edge of the map (or the direction the sled is not moving)
 			if y >= (len(map[0])):
 				y = y % (len(map[0]))
-				print(f'adjusted y = {y}')
+				# print(f'adjusted y = {y}')
 
 			# is there a tree (#) on map[x][y] ?
 			if map[x][y] == '#':
@@ -36,13 +36,40 @@ def countTrees(map, moveToboggan, start_x = 0, start_y = 0):
 		# reached the end of the map
 		return trees
 
+# Method 1
+# So many methods for so little gain! Why do they even have names, no one cares!
 
-def cheapToboggan(current_x, current_y):
-	return current_x + 1, current_y + 3
+# def slopeOne(x, y):
+# 	return x + 1, y + 1
 
+# def slopeTwo(x, y):
+# 	return x + 1, y + 3
+
+# def slopeThree(x, y):
+# 	return x + 1, y + 5
+
+# def slopeFour(x, y):
+# 	return x + 1, y + 7
+
+# def slopeFive(x, y):
+# 	return x + 2, y + 1
+
+# slopes = [slopeOne, slopeTwo, slopeThree, slopeFour, slopeFive]
+
+# Method 2: Anonymous functions, or "lambdas" in python
+# Much better :)
+slopes = [
+	(lambda x,y: (x+1, y+1)),
+	(lambda x,y: (x+1, y+3)),
+	(lambda x,y: (x+1, y+5)),
+	(lambda x,y: (x+1, y+7)),
+	(lambda x,y: (x+2, y+1))
+]
 
 map = readMapFile('input.txt')
 
-print(f'max y={len(map[0])-1} sample: {map[0][len(map[0])-1]}')
-numTrees = countTrees(map, cheapToboggan)
-print(f'Encountered {numTrees} trees')
+accumulatedProduct = 1
+for slope in slopes:
+	accumulatedProduct = accumulatedProduct * countTrees(map, slope)
+
+print(f'The accumulatedProduct is {accumulatedProduct}')
