@@ -3,6 +3,32 @@ import re
 def in_bound(l, r):
 	return lambda x: l <= int(x) <= r
 
+def validate_hgt(height):
+	matches = re.match(r'(\d+)(cm|in)', height)
+	try:
+		# print(f'{matches[0]} | {matches[1]} | {matches[2]}')
+		return in_bound(150, 193)(matches[1]) if (matches[2] == 'cm') else in_bound(59, 76)(matches[1])
+	except TypeError:
+		# TypeError is caused by the matches not returning the expected 3 values
+		# This happens when the hgt is `178` and not `178cm`, so it's invalid
+		return False
+
+# Optimisation note; validate_hcl() and validate_pid() could be made into a validate_regex() method
+def validate_hcl(colour):
+	# print(f'{colour}')
+	try:
+		return re.findall(r'#[0-9a-f]{6}', colour)[0] == colour
+	except IndexError:
+		# IndexError occurs when trying to get [0] from the regex findall
+		# this means that whatever value `colour` was it didn't match the regex pattern
+		# so it's not valid
+		return False
+
+def validate_pid(pid):
+	try:
+		return re.findall(r'[0-9]{9}', pid)[0] == pid
+	except IndexError:
+		return False
 
 class Passport:
 	def isValid(self):
@@ -10,10 +36,10 @@ class Passport:
 			'byr': in_bound(1920, 2002),
 			'iyr': in_bound(2010, 2020),
 			'eyr': in_bound(2020, 2030),
-			'hgt': (lambda x: True),
-			'hcl': (lambda x: True),
-			'ecl': (lambda x: True),
-			'pid': (lambda x: True)
+			'hgt': validate_hgt,
+			'hcl': validate_hcl,
+			'ecl': (lambda x: x in ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth']),
+			'pid': validate_pid
 		}
 
 		for field in requiredFields:
@@ -28,11 +54,11 @@ class Passport:
 
 def testPassport():
 	pp = Passport()
-	pp.byr = '000'
-	pp.iyr = '000'
-	pp.eyr = '000'
-	pp.hgt = '000'
-	pp.hcl = '000'
+	pp.byr = '1920'
+	pp.iyr = '2010'
+	pp.eyr = '2020'
+	pp.hgt = '75in'
+	pp.hcl = '#00000z'
 	pp.ecl = '000'
 	pp.pid = '000'
 	pp.cid = '000'
@@ -77,3 +103,5 @@ def countValidPassports(passports):
 passports = readPassports('input.txt')
 numValid = countValidPassports(passports)
 print(f'Found {numValid} valid passports')
+
+# testPassport()
