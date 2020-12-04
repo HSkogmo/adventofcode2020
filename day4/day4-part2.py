@@ -13,7 +13,9 @@ def validate_hgt(height):
 		# This happens when the hgt is `178` and not `178cm`, so it's invalid
 		return False
 
-# Optimisation note; validate_hcl() and validate_pid() could be made into a validate_regex() method
+# Optimisation note;
+# validate_hcl() and validate_pid() could be made leaner with a validate_regex() to hold the try
+# catch logic
 def validate_hcl(colour):
 	# print(f'{colour}')
 	try:
@@ -43,11 +45,10 @@ class Passport:
 		}
 
 		for field in requiredFields:
-			if not hasattr(self, field):
+			# if the attribute was not set on the class
+			# or if it was, the method in the value returned False
+			if not hasattr(self, field) or not requiredFields[field](getattr(self, field)):
 				return False
-			else:
-				if not requiredFields[field](getattr(self, field)):
-					return False
 
 		return True
 
