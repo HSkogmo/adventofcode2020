@@ -1,3 +1,4 @@
+import math
 import re
 
 
@@ -36,13 +37,14 @@ class BoardingPass:
         return range_foo[0] if string[-1] is keep_left_char else range_foo[1]
 
     def reduce_range(self, range_limits):
-        # generate list from range[0] to range[1]
-        # how can generating a list be avoided?
         full_range = list(range(range_limits[0], range_limits[1]+1))
         num_indexes = len(full_range)
+        # how can generating a list be avoided? uses a lot of space, but only the 4 values are of interest
+        # could they be calculated instead?
 
-        # Number of indexes is always (observed as) as an even number
-        # print(f'number of indexes in full range: {num_indexes}')
+        # Identify the two dividing indexes of the full_range when halved
+        # Number of indexes is always (observed as) an even number, so should be able to safely divide by 2
+        # subtract 1 to account for index 0 and len()
         split_l_idx = int(num_indexes / 2) - 1
         split_r_idx = int(split_l_idx) + 1
 
@@ -51,7 +53,26 @@ class BoardingPass:
 
 boarding_passes = read_boarding_passes('input.txt')
 highest_seat_id = 0
+lowest_seat_id = math.inf
 for bp in boarding_passes:
     highest_seat_id = bp.seat_id if bp.seat_id > highest_seat_id else highest_seat_id
+    lowest_seat_id = bp.seat_id if bp.seat_id < lowest_seat_id else lowest_seat_id
 
+# To find the missing IDs in the sequence we can either
+# A) generate a list of the range(lo, hi), then iterate through the boarding passes, removing them from the list as they
+# are observed. Our missing ID will be left. One pass to find hi/lo values, second pass to eliminate the existing ones.
+#
+# B) sort the list of boarding_passes according to their seat id and walk the list until we find a break.
+# Whatever many passes the sorting algorithm needs (quicksort avg O(nlogn), so worse than O(n)).
+# And a second pass to find the break in the sequence.
+
+print(f'Number of boarding passes: {len(boarding_passes)}')
 print(f'Highest seat id: {highest_seat_id}')
+print(f'Lowest seat id: {lowest_seat_id}')
+
+all_seat_ids = list(range(lowest_seat_id, highest_seat_id+1))
+
+for bp in boarding_passes:
+    all_seat_ids.remove(bp.seat_id)
+
+print(f'Remaining seat ids: {all_seat_ids}')
